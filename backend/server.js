@@ -143,29 +143,38 @@ app.get("/api/my-complaints/:user_id", async (req, res) => {
 //////////////////////////////////////////////////////
 // 🔍 GET FULL COMPLAINT DETAILS + STATUS + RESOLUTION
 //////////////////////////////////////////////////////
-app.get("/api/complaint/:id", async (req, res) => {
-    const { id } = req.params;
 
-    const { data: history } = await supabase
-        .from("status_updates")
-        .select(`
+app.get("/api/complaint/:id", async (req, res) => {
+  const { id } = req.params;
+
+  // 🔹 Get complaint details
+  const { data: complaint } = await supabase
+    .from("complaints")
+    .select("title, description")
+    .eq("complaint_id", id)
+    .single();
+
+  // 🔹 Get status history
+  const { data: history } = await supabase
+    .from("status_updates")
+    .select(`
       updated_date,
       remarks,
       status (status_name),
       administrators (name)
     `)
-        .eq("complaint_id", id)
-        .order("updated_date", { ascending: true });
+    .eq("complaint_id", id)
+    .order("updated_date", { ascending: true });
 
-    const { data: resolution } = await supabase
-        .from("resolutions")
-        .select("resolution_text, resolved_at")
-        .eq("complaint_id", id)
-        .single();
+  // 🔹 Get resolution
+  const { data: resolution } = await supabase
+    .from("resolutions")
+    .select("resolution_text, resolved_at")
+    .eq("complaint_id", id)
+    .single();
 
-    res.json({ history, resolution });
+  res.json({ complaint, history, resolution });
 });
-
 //////////////////////////////////////////////////////
 // 🛠️ ADMIN: VIEW COMPLAINTS (FILTER + SORT)
 //////////////////////////////////////////////////////
