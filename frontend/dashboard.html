@@ -1,0 +1,76 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESOLVE | Complaint Management</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1>Your Complaints</h1>
+
+  <div class="dashboard-header">
+    <div class="filter-controls">
+      <div class="filter-group">
+        <label for="sortSelect">Sort By:</label>
+        <select id="sortSelect" title="Sort complaints by different criteria">
+          <option value="newest-date">📅 Newest First</option>
+          <option value="oldest-date">📅 Oldest First</option>
+          <option value="priority-high">🔴 High Priority First</option>
+          <option value="priority-low">🟢 Low Priority First</option>
+          <option value="status-pending">📋 Pending First</option>
+          <option value="status-resolved">✅ Resolved First</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="dateFilter">Date Range:</label>
+        <select id="dateFilter" title="Filter by date range">
+          <option value="all">All Time</option>
+          <option value="today">Today</option>
+          <option value="week">Last 7 Days</option>
+          <option value="month">Last 30 Days</option>
+          <option value="custom">Custom Range</option>
+        </select>
+      </div>
+
+      <div class="filter-group" id="customDateGroup">
+        <label for="customFromDate">From:</label>
+        <input type="date" id="customFromDate" />
+        <label for="customToDate" class="custom-to-label">To:</label>
+        <input type="date" id="customToDate" />
+      </div>
+    </div>
+  </div>
+
+  <div id="chartContainer" class="chart-section">
+    <h2>Complaints Overview</h2>
+    <canvas id="statusChart"></canvas>
+  </div>
+
+  <div id="list"></div>
+
+  <!-- New Complaint Button Section -->
+  <div style="text-align: center; margin-top: 60px; padding: 40px 20px; background: rgba(107, 112, 92, 0.08); border-radius: 8px; margin-left: 20px; margin-right: 20px;">
+    <h3 style="margin-bottom: 20px; color: #333;">Ready to file a complaint?</h3>
+    <button class="btn-new-complaint" onclick="window.location='file-complaint.html'" style="display: inline-flex; align-items: center; gap: 12px; background: linear-gradient(135deg, #6B705C, #5a5e4b); color: white; border: none; padding: 18px 50px; border-radius: 10px; font-size: 1.1rem; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(107, 112, 92, 0.4); transition: all 0.3s ease;">
+      <span style="font-size: 1.5rem;">📝</span>
+      <span>File New Complaint</span>
+      <span>→</span>
+    </button>
+  </div>
+</div>
+
+<script type="module" src="js/dashboard.js"></script>
+
+<!-- Simple New Complaint button - no animations -->
+<!-- no script needed -->
+<script src="js/animations.js"></script>
+</body>

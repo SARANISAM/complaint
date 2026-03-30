@@ -1,0 +1,262 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESOLVE | Complaint Management</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <h1>File New Complaint</h1>
+  <p class="form-subtitle">Help us resolve your issue faster by providing details</p>
+
+  <form id="complaintForm" class="complaint-form">
+    <div class="form-group">
+      <label for="title">Complaint Title *</label>
+      <input id="title" type="text" placeholder="Brief summary of your complaint" required />
+    </div>
+
+    <div class="form-group">
+      <label for="desc">Description *</label>
+      <textarea id="desc" placeholder="Provide detailed information about your complaint" required></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="dept">Department *</label>
+        <select id="dept" required>
+          <option value="">Select Department</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="priority">Priority Level *</label>
+        <select id="priority" required onchange="updatePriorityInfo()">
+          <option value="">Select Priority</option>
+        </select>
+        <div id="priorityInfo" class="priority-info"></div>
+      </div>
+    </div>
+
+    <div class="form-group date-info">
+      <label for="complaintDate">Complaint Date *</label>
+      <div class="date-picker-wrapper">
+        <input id="complaintDate" type="date" required title="Select the date of your complaint" />
+        <span class="date-hint">Select date from calendar</span>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-submit">Submit Complaint</button>
+    <button type="reset" class="btn btn-reset">Clear</button>
+  </form>
+</div>
+
+<script type="module">
+import { apiCall } from "./js/api.js";
+
+let priorityMap = {};
+
+const meta = await apiCall("/meta");
+
+meta.departments.forEach(d => {
+  dept.innerHTML += `<option value="${d.department_id}">${d.department_name}</option>`;
+});
+
+meta.priority.forEach(p => {
+  priorityMap[p.priority_id] = p.priority_name;
+  priority.innerHTML += `<option value="${p.priority_id}">${p.priority_name}</option>`;
+});
+
+function updatePriorityInfo() {
+  const priorityId = priority.value;
+  const infoEl = document.getElementById("priorityInfo");
+  
+  const priorityDescriptions = {
+    1: "🟢 Low - General inquiries and non-urgent concerns",
+    2: "🟡 Medium - Important issues requiring attention",
+    3: "🔴 High - Urgent matters affecting operations",
+    4: "🔴🔴 Critical - Severe issues needing immediate action"
+  };
+  
+  if (priorityId) {
+    infoEl.innerHTML = `<span>${priorityDescriptions[priorityId] || ""}</span>`;
+  } else {
+    infoEl.innerHTML = "";
+  }
+}
+
+window.updatePriorityInfo = updatePriorityInfo;
+
+function setDefaultDate() {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  document.getElementById("complaintDate").value = `${year}-${month}-${day}`;
+}
+
+setDefaultDate();
+
+document.getElementById("complaintForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  
+  if (!title.value.trim()) {
+    alert("Please enter a complaint title");
+    return;
+  }
+  
+  if (!desc.value.trim()) {
+    alert("Please enter a description");
+    return;
+  }
+  
+  if (!dept.value) {
+    alert("Please select a department");
+    return;
+  }
+  
+  if (!priority.value) {
+    alert("Please select priority level");
+    return;
+  }
+
+  if (!document.getElementById("complaintDate").value) {
+    alert("Please select a complaint date");
+    return;
+  }
+  
+  try {
+    const res = await apiCall("/complaint", "POST", {
+      user_id: sessionStorage.getItem("user_id"),
+      title: title.value,
+      description: desc.value,
+      department_id: dept.value,
+      priority_id: priority.value,
+      complaint_date: document.getElementById("complaintDate").value
+    });
+    
+    if (res.message) {
+      alert("Complaint submitted successfully!");
+      window.location = "dashboard.html";
+    } else {
+      alert("Error submitting complaint: " + JSON.stringify(res.error));
+    }
+  } catch (err) {
+    alert("Failed to submit complaint. Please try again.");
+  }
+});
+</script>
+
+<!-- GSAP Form Animations -->
+<script>
+gsap.registerPlugin(gsap);
+
+// Animate container entrance
+gsap.from(".container", {
+  y: 30,
+  opacity: 0,
+  duration: 0.6,
+  ease: "power3.out"
+});
+
+// Animate form entrance
+gsap.from(".complaint-form", {
+  y: 20,
+  opacity: 0,
+  duration: 0.7,
+  delay: 0.2,
+  ease: "power3.out"
+});
+
+// Animate all form groups with stagger
+gsap.from(".form-group", {
+  y: 15,
+  opacity: 0,
+  duration: 0.5,
+  stagger: 0.1,
+  delay: 0.35,
+  ease: "power2.out"
+});
+
+// Animate title and subtitle
+gsap.from("h1", {
+  y: 20,
+  opacity: 0,
+  duration: 0.5,
+  ease: "power3.out"
+});
+
+gsap.from(".form-subtitle", {
+  y: 15,
+  opacity: 0,
+  duration: 0.5,
+  delay: 0.1,
+  ease: "power3.out"
+});
+
+// Button hover animations
+const buttons = document.querySelectorAll(".btn-submit, .btn-reset");
+buttons.forEach(btn => {
+  btn.addEventListener("mouseenter", function() {
+    gsap.to(this, {
+      scale: 1.05,
+      duration: 0.3,
+      overwrite: "auto"
+    });
+  });
+  
+  btn.addEventListener("mouseleave", function() {
+    gsap.to(this, {
+      scale: 1,
+      duration: 0.3,
+      overwrite: "auto"
+    });
+  });
+});
+
+// Form inputs focus animation
+const inputs = document.querySelectorAll("input, textarea, select");
+inputs.forEach(input => {
+  input.addEventListener("focus", function() {
+    gsap.to(this, {
+      backgroundColor: "rgba(107, 112, 92, 0.05)",
+      duration: 0.3,
+      overwrite: "auto"
+    });
+  });
+  
+  input.addEventListener("blur", function() {
+    gsap.to(this, {
+      backgroundColor: "transparent",
+      duration: 0.3,
+      overwrite: "auto"
+    });
+  });
+});
+
+// Priority info animation when it appears
+const priorityInfoObserver = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (mutation.addedNodes.length) {
+      gsap.from("#priorityInfo", {
+        opacity: 0,
+        duration: 0.4,
+        ease: "power2.out"
+      });
+    }
+  });
+});
+
+const priorityInfoEl = document.getElementById("priorityInfo");
+if (priorityInfoEl) {
+  priorityInfoObserver.observe(priorityInfoEl, { childList: true });
+}
+</script>
+<script src="js/animations.js"></script>
+</body>

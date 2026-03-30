@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RESOLVE | Admin Panel</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- 🟢 MODAL (USED IN JS) -->
+<div id="noDeptModal" class="modal">
+  <div class="modal-content">
+    <h2>No department assigned</h2>
+    <p>Please login as an admin with department assignment to continue.</p>
+    <button id="deptModalClose" class="btn btn-modal-close">Close</button>
+  </div>
+</div>
+
+<div class="container page-container">
+
+  <!-- 🟢 HEADER -->
+  <header class="admin-header">
+    <h1>Admin Panel</h1>
+    <p id="departmentSummary">Department: <span id="deptName">-</span></p>
+
+    <!-- Used in admin.js -->
+    <div id="deptChips" class="dept-chips"></div>
+  </header>
+
+  <!-- 🟢 CONTROLS -->
+  <section class="admin-controls">
+
+    <div class="filter-group">
+      <label for="statusFilter">Status</label>
+      <select id="statusFilter">
+        <option value="">All</option>
+        <option value="1">Pending</option>
+        <option value="2">In Progress</option>
+        <option value="3">Resolved</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="priorityFilter">Priority</label>
+      <select id="priorityFilter">
+        <option value="">All</option>
+        <option value="1">Low</option>
+        <option value="2">Medium</option>
+        <option value="3">High</option>
+        <option value="4">Critical</option>
+      </select>
+    </div>
+
+    <div class="filter-group filter-group--wide">
+      <label for="searchInput">Search</label>
+      <input id="searchInput" placeholder="Title, user, email, remarks" />
+    </div>
+
+    <div class="filter-group">
+      <label for="sortDate">Sort</label>
+      <select id="sortDate">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+      </select>
+    </div>
+
+    <!-- 🟢 IMPORTANT: used in JS -->
+    <button id="refreshBtn" class="btn small">Refresh</button>
+
+  </section>
+
+  <!-- 🟢 STATS -->
+  <section class="stats-panel" id="statsPanel"></section>
+
+  <!-- 🟢 MAIN LIST -->
+  <section id="list"></section>
+
+</div>
+
+<!-- 🟢 SCRIPT -->
+<script type="module" src="js/admin.js"></script>
+
+</body>
+</html>
