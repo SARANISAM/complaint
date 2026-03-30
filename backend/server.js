@@ -123,7 +123,9 @@ app.get("/api/my-complaints/:user_id", async (req, res) => {
       description,
       date_of_submission,
       priority (priority_name),
-      departments (department_name)
+      departments (department_name),
+      status_updates (status_id, updated_date, remarks, status (status_name)),
+      resolutions (resolution_text, resolved_at)
     `)
         .eq("user_id", user_id);
 
@@ -180,7 +182,7 @@ app.get("/api/complaint/:id", async (req, res) => {
 //////////////////////////////////////////////////////
 app.get("/api/admin/complaints/:department_id", async (req, res) => {
     const { department_id } = req.params;
-    const { priority, status } = req.query;
+    const { priority } = req.query;
 
     let query = supabase
         .from("complaints")
@@ -188,8 +190,11 @@ app.get("/api/admin/complaints/:department_id", async (req, res) => {
       complaint_id,
       title,
       description,
+      date_of_submission,
       users (name, email),
-      priority (priority_name)
+      priority (priority_name),
+      status_updates (status_id, updated_date, remarks, status (status_name), administrators (name)),
+      resolutions (resolution_text, resolved_at)
     `)
         .eq("department_id", department_id);
 
