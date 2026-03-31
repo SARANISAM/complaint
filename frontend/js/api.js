@@ -1,4 +1,4 @@
-const BASE_URL = "https://complaint-eyfd.onrender.com";
+const BASE_URL = "https://complaint-eyfd.onrender.com/api";
 
 
 
