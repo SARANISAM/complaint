@@ -1,17 +1,19 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import connectMongo from "./mongo.js";
 
 dotenv.config();
 
 import { getSupabase } from "./supabaseClient.js";
 
 const supabase = getSupabase();
+import Feedback from "./models/Feedback.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+connectMongo();
 const PORT = process.env.PORT || 3000;
 
 //////////////////////////////////////////////////////
@@ -253,4 +255,32 @@ app.post("/api/admin/resolve", async (req, res) => {
 //////////////////////////////////////////////////////
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
+});
+
+//////////////////////////////////////////////////////
+// 🗳️ FEEDBACK (Mongo)
+//////////////////////////////////////////////////////
+// Save feedback for a complaint
+app.post("/api/feedback", async (req, res) => {
+    try {
+        const { complaint_id, rating, comment, user } = req.body;
+        const feedback = new Feedback({ complaint_id, rating, comment, user });
+        await feedback.save();
+        res.json({ message: "Feedback saved" });
+    } catch (err) {
+        console.error("Feedback save error:", err);
+        res.status(500).json({ message: "Could not save feedback", error: err.message });
+    }
+});
+
+// Get feedback list for a complaint
+app.get("/api/feedback/:complaint_id", async (req, res) => {
+    try {
+        const { complaint_id } = req.params;
+        const items = await Feedback.find({ complaint_id }).sort({ created_at: -1 });
+        res.json(items);
+    } catch (err) {
+        console.error("Feedback fetch error:", err);
+        res.status(500).json({ message: "Could not fetch feedback", error: err.message });
+    }
 });

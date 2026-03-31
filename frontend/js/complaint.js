@@ -129,3 +129,56 @@ async function loadComplaint() {
 }
 
 loadComplaint();
+
+//////////////////////////////////////////////////////
+// ⭐ FEEDBACK FUNCTIONS
+//////////////////////////////////////////////////////
+
+// make function accessible to HTML button
+window.submitFeedback = function () {
+  const rating = document.getElementById("rating").value;
+  const comment = document.getElementById("comment").value;
+
+  const complaint_id = getQueryParam("id"); // better than localStorage
+
+  fetch("http://localhost:3000/api/feedback", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      complaint_id,
+      rating,
+      comment,
+      user: "User"
+    })
+  })
+  .then(res => res.json())
+  .then(() => {
+    alert("Feedback submitted!");
+    loadFeedback();
+  });
+};
+
+// load feedback list
+function loadFeedback() {
+  const id = getQueryParam("id");
+
+  fetch(`http://localhost:3000/api/feedback/${id}`)
+    .then(res => res.json())
+    .then(data => {
+      const div = document.getElementById("feedbackList");
+      if (!div) return;
+
+      div.innerHTML = "";
+
+      data.forEach(f => {
+        div.innerHTML += `
+          <p>⭐ ${f.rating} - ${f.comment}</p>
+        `;
+      });
+    });
+}
+
+// run when page loads
+loadFeedback();
