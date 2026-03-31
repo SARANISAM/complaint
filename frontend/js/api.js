@@ -1,6 +1,6 @@
-const PROD_API = "https://complaint-eyfd.onrender.com/api";
-const LOCAL_API = "http://localhost:3000/api";
-const BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? LOCAL_API : PROD_API;
+const BASE_URL = "https://complaint-eyfd.onrender.com/api";
+
+
 
 export async function apiCall(endpoint, method = "GET", body = null) {
   const res = await fetch(BASE_URL + endpoint, {
